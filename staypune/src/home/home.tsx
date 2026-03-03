@@ -4,11 +4,14 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import {
   APP_BRAND,
+  FEED_SUBTITLE,
   FLATS_SECTION_TITLE,
   LOADING_FLATS_TEXT,
   NO_FLATS_TEXT,
   PUNE_FLATS_QUERY_KEY,
   REDDIT_API_URL,
+  RENTAL_EXCLUDE_KEYWORDS,
+  RENTAL_INCLUDE_KEYWORDS,
   REDDIT_POST_BASE_URL,
 } from "./constants";
 import type { RedditListingResponse, RedditPost } from "./types";
@@ -24,6 +27,17 @@ async function fetchPuneFlats(): Promise<RedditPost[]> {
   return json.data.children.map((child) => child.data);
 }
 
+function isRentalPost(post: RedditPost): boolean {
+  const title = post.title.toLowerCase();
+  const hasRentalKeyword = RENTAL_INCLUDE_KEYWORDS.some((keyword) =>
+    title.includes(keyword),
+  );
+  const hasExcludedKeyword = RENTAL_EXCLUDE_KEYWORDS.some((keyword) =>
+    title.includes(keyword),
+  );
+  return hasRentalKeyword && !hasExcludedKeyword;
+}
+
 function Home() {
   const {
     data: flats,
@@ -35,21 +49,32 @@ function Home() {
     queryFn: fetchPuneFlats,
   });
 
+  const filteredFlats = (flats ?? []).filter(isRentalPost);
+
   return (
     <div className="home-layout">
       <Header title={APP_BRAND} />
 
       <div className="home-main">
-        <h2>{FLATS_SECTION_TITLE}</h2>
+        <div className="section-header">
+          <h2>{FLATS_SECTION_TITLE}</h2>
+          <p>{FEED_SUBTITLE}</p>
+        </div>
 
-        {isLoading && <p>{LOADING_FLATS_TEXT}</p>}
+        {!isLoading && !isError && (
+          <div className="results-meta">{filteredFlats.length} rental matches</div>
+        )}
 
-        {isError && <p>Error: {(error as Error).message}</p>}
+        {isLoading && <p className="feedback-text">{LOADING_FLATS_TEXT}</p>}
 
-        {!isLoading && !isError && flats?.length === 0 && <p>{NO_FLATS_TEXT}</p>}
+        {isError && <p className="feedback-text error-text">Error: {(error as Error).message}</p>}
+
+        {!isLoading && !isError && filteredFlats.length === 0 && (
+          <p className="feedback-text">{NO_FLATS_TEXT}</p>
+        )}
 
         <div className="flat-list">
-          {flats?.map((post) => (
+          {filteredFlats.map((post) => (
             <a
               className="flat-card"
               key={post.id}
@@ -58,8 +83,8 @@ function Home() {
               rel="noreferrer"
             >
               <h3>{post.title}</h3>
-              <p>Posted by u/{post.author}</p>
-              <p>{new Date(post.created_utc * 1000).toLocaleString()}</p>
+              <p className="meta-row">Posted by u/{post.author}</p>
+              <p className="date-row">{new Date(post.created_utc * 1000).toLocaleString()}</p>
             </a>
           ))}
         </div>
