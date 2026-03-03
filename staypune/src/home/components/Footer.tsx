@@ -1,6 +1,4 @@
-type FooterProps = {
-  brand: string;
-};
+import type { FooterProps } from "../types";
 
 function Footer({ brand }: FooterProps) {
   const year = new Date().getFullYear();

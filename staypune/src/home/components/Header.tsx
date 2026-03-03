@@ -1,6 +1,4 @@
-type HeaderProps = {
-  title: string;
-};
+import type { HeaderProps } from "../types";
 
 function Header({ title }: HeaderProps) {
   return (

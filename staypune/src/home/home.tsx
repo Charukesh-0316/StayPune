@@ -2,28 +2,19 @@ import { useQuery } from "@tanstack/react-query";
 import "../App.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
-type RedditPost = {
-  id: string;
-  title: string;
-  permalink: string;
-  author: string;
-  created_utc: number;
-  url: string;
-};
-
-type RedditListingResponse = {
-  data: {
-    children: Array<{
-      data: RedditPost;
-    }>;
-  };
-};
-
-const REDDIT_URL = "/api/reddit/r/PuneClassifieds/new.json?limit=20";
+import {
+  APP_BRAND,
+  FLATS_SECTION_TITLE,
+  LOADING_FLATS_TEXT,
+  NO_FLATS_TEXT,
+  PUNE_FLATS_QUERY_KEY,
+  REDDIT_API_URL,
+  REDDIT_POST_BASE_URL,
+} from "./constants";
+import type { RedditListingResponse, RedditPost } from "./types";
 
 async function fetchPuneFlats(): Promise<RedditPost[]> {
-  const response = await fetch(REDDIT_URL);
+  const response = await fetch(REDDIT_API_URL);
 
   if (!response.ok) {
     throw new Error("Failed to fetch flats from Reddit");
@@ -40,31 +31,29 @@ function Home() {
     isError,
     error,
   } = useQuery({
-    queryKey: ["pune-flats"],
+    queryKey: PUNE_FLATS_QUERY_KEY,
     queryFn: fetchPuneFlats,
   });
 
   return (
     <div className="home-layout">
-      <Header title="StayPune" />
+      <Header title={APP_BRAND} />
 
       <div className="home-main">
-        <h2>Latest Flats from r/PuneClassifieds</h2>
+        <h2>{FLATS_SECTION_TITLE}</h2>
 
-        {isLoading && <p>Loading flats...</p>}
+        {isLoading && <p>{LOADING_FLATS_TEXT}</p>}
 
         {isError && <p>Error: {(error as Error).message}</p>}
 
-        {!isLoading && !isError && flats?.length === 0 && (
-          <p>No flat posts found right now.</p>
-        )}
+        {!isLoading && !isError && flats?.length === 0 && <p>{NO_FLATS_TEXT}</p>}
 
         <div className="flat-list">
           {flats?.map((post) => (
             <a
               className="flat-card"
               key={post.id}
-              href={`https://www.reddit.com${post.permalink}`}
+              href={`${REDDIT_POST_BASE_URL}${post.permalink}`}
               target="_blank"
               rel="noreferrer"
             >
@@ -76,7 +65,7 @@ function Home() {
         </div>
       </div>
 
-      <Footer brand="StayPune" />
+      <Footer brand={APP_BRAND} />
     </div>
   );
 }
