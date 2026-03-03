@@ -33,7 +33,8 @@ function hasKeywordMatch(title: string, keyword: string): boolean {
   }
 
   const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const keywordPattern = new RegExp(`\\b${escapedKeyword}\\b`);
+  // Match token boundaries against letters only, so 1bhk/2pg still match.
+  const keywordPattern = new RegExp(`(?<![a-z])${escapedKeyword}(?![a-z])`);
   return keywordPattern.test(title);
 }
 
