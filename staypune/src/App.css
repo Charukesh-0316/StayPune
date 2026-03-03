@@ -1,0 +1,72 @@
+#root {
+  min-height: 100vh;
+}
+
+.home-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.home-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.home-main {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.home-main h2 {
+  margin: 0 0 1rem;
+}
+
+.home-main p {
+  margin: 0;
+}
+
+.flat-list {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.flat-card {
+  display: block;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.9rem;
+  background: #ffffff;
+  color: #111827;
+  text-decoration: none;
+}
+
+.flat-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+
+.flat-card p {
+  margin: 0.15rem 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.home-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.home-footer p {
+  margin: 0;
+  font-size: 0.95rem;
+}
