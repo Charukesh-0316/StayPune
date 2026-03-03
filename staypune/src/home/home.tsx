@@ -27,14 +27,26 @@ async function fetchPuneFlats(): Promise<RedditPost[]> {
   return json.data.children.map((child) => child.data);
 }
 
+function hasKeywordMatch(title: string, keyword: string): boolean {
+  if (keyword.includes(" ")) {
+    return title.includes(keyword);
+  }
+
+  const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Match token boundaries against letters only, so 1bhk/2pg still match.
+  const keywordPattern = new RegExp(`(?<![a-z])${escapedKeyword}(?![a-z])`);
+  return keywordPattern.test(title);
+}
+
 function isRentalPost(post: RedditPost): boolean {
   const title = post.title.toLowerCase();
   const hasRentalKeyword = RENTAL_INCLUDE_KEYWORDS.some((keyword) =>
-    title.includes(keyword),
+    hasKeywordMatch(title, keyword),
   );
   const hasExcludedKeyword = RENTAL_EXCLUDE_KEYWORDS.some((keyword) =>
-    title.includes(keyword),
+    hasKeywordMatch(title, keyword),
   );
+
   return hasRentalKeyword && !hasExcludedKeyword;
 }
 
@@ -80,7 +92,7 @@ function Home() {
               key={post.id}
               href={`${REDDIT_POST_BASE_URL}${post.permalink}`}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               <h3>{post.title}</h3>
               <p className="meta-row">Posted by u/{post.author}</p>
