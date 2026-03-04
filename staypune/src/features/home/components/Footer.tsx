@@ -1,4 +1,4 @@
-import type { FooterProps } from "../../lib/utils/types";
+import type { FooterProps } from "../../../lib/types/reddit";
 
 function Footer({ brand }: FooterProps) {
   const year = new Date().getFullYear();

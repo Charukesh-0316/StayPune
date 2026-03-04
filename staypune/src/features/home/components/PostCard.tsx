@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Skeleton } from "../../components/ui/skeleton";
-import { redditPostBaseUrl } from "../../lib/utils/constants";
-import type { PostCardProps } from "../../lib/utils/types";
+import { Skeleton } from "../../../components/ui/skeleton";
+import { redditPostBaseUrl } from "../../../lib/constants/app";
+import type { PostCardProps } from "../../../lib/types/reddit";
 
 function PostCard({ post }: PostCardProps) {
   const [hasImageError, setHasImageError] = useState(false);
