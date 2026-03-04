@@ -1,4 +1,4 @@
-import type { FooterProps } from "../types";
+import type { FooterProps } from "../../lib/utils/types";
 
 function Footer({ brand }: FooterProps) {
   const year = new Date().getFullYear();
