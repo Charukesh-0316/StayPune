@@ -1,5 +1,5 @@
-import { redditPostsApiUrl } from "./constants";
-import type { RentalPostPreview } from "./types";
+import { redditPostsApiUrl } from "../constants/app";
+import type { RentalPostPreview } from "../types/reddit";
 
 export async function fetchRentalPosts(): Promise<RentalPostPreview[]> {
   const response = await fetch(redditPostsApiUrl);
@@ -7,6 +7,7 @@ export async function fetchRentalPosts(): Promise<RentalPostPreview[]> {
   if (!response.ok) {
     throw new Error("Failed to fetch flats from server");
   }
+   const posts = await response.json() as RentalPostPreview[];
 
-  return response.json() as Promise<RentalPostPreview[]>;
+  return posts;
 }

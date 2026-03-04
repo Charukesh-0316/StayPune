@@ -1,4 +1,4 @@
-import type { HeaderProps } from "../../lib/utils/types";
+import type { HeaderProps } from "../../../lib/types/reddit";
 
 function Header({ title }: HeaderProps) {
   return (

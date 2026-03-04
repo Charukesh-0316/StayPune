@@ -1,8 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { redditSourceUrl } from "./src/lib/utils/constants";
-import { mapRentalPostPreviews } from "./src/lib/utils/reddit";
-import type { RedditListingResponse } from "./src/lib/utils/types";
+import { redditSourceUrl } from "./src/lib/constants/app";
+import { mapRentalPostPreviews } from "./src/lib/parsers/reddit";
+import type { RedditListingResponse } from "./src/lib/types/reddit";
 
 // https://vite.dev/config/
 export default defineConfig({

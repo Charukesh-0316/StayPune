@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import "../App.css";
+import "../../App.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import PostCard from "./components/PostCard";
@@ -10,8 +10,8 @@ import {
   loadingFlatsText,
   noFlatsText,
   puneFlatsQueryKey,
-} from "../lib/utils/constants";
-import { fetchRentalPosts } from "../lib/utils/api";
+} from "../../lib/constants/app";
+import { fetchRentalPosts } from "../../lib/api/flats";
 
 function Home() {
   const {

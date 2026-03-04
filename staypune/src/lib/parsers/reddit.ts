@@ -1,5 +1,5 @@
-import { rentalExcludeKeywords, rentalIncludeKeywords } from "./constants";
-import type { RedditListingResponse, RentalPostPreview } from "./types";
+import { rentalExcludeKeywords, rentalIncludeKeywords } from "../constants/app";
+import type { RedditListingResponse, RentalPostPreview } from "../types/reddit";
 
 function hasKeywordMatch(title: string, keyword: string): boolean {
   if (keyword.includes(" ")) {
