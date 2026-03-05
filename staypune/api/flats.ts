@@ -24,7 +24,10 @@ type RedditListingResponse = {
   };
 };
 
-const redditSourceUrl = "https://www.reddit.com/r/PuneClassifieds/new.json?limit=20";
+const redditSourceUrls = [
+  "https://api.reddit.com/r/PuneClassifieds/new?limit=20&raw_json=1",
+  "https://www.reddit.com/r/PuneClassifieds/new.json?limit=20&raw_json=1",
+] as const;
 
 const rentalIncludeKeywords = [
   "rent",
@@ -119,22 +122,44 @@ function mapRentalPostPreviews(listing: RedditListingResponse) {
     }));
 }
 
-export default async function handler(_req: unknown, res: ApiResponse) {
-  try {
-    const response = await fetch(redditSourceUrl, {
+async function fetchListingWithFallback() {
+  let lastStatus = 500;
+
+  for (const url of redditSourceUrls) {
+    const response = await fetch(url, {
       headers: {
-        "user-agent": "StayPuneFeed/1.0",
+        "user-agent": "Mozilla/5.0 (compatible; StayPuneFeed/1.0; +https://stay-pune.vercel.app)",
+        accept: "application/json",
       },
     });
 
-    if (!response.ok) {
-      res.status(response.status).json({
+    if (response.ok) {
+      const listing = (await response.json()) as RedditListingResponse;
+      return {
+        listing,
+        status: response.status,
+      };
+    }
+
+    lastStatus = response.status;
+  }
+
+  return {
+    listing: null,
+    status: lastStatus,
+  };
+}
+
+export default async function handler(_req: unknown, res: ApiResponse) {
+  try {
+    const { listing, status } = await fetchListingWithFallback();
+    if (!listing) {
+      res.status(status).json({
         error: "Failed to fetch flats from Reddit",
       });
       return;
     }
 
-    const listing = (await response.json()) as RedditListingResponse;
     const rentalPosts = mapRentalPostPreviews(listing);
     res.status(200).json(rentalPosts);
   } catch {
