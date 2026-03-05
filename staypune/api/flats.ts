@@ -1,6 +1,6 @@
-import { redditSourceUrl } from "../src/lib/constants/app";
-import { mapRentalPostPreviews } from "../src/lib/parsers/reddit";
-import type {  RedditResponse, RedditListingResponse } from "../src/lib/types/reddit";
+import { redditSourceUrl } from "../src/lib/constants/app.js";
+import { mapRentalPostPreviews } from "../src/lib/parsers/reddit.js";
+import type {  RedditResponse, RedditListingResponse } from "../src/lib/types/reddit.js";
 
 
 export default async function handler(_req: unknown, res: RedditResponse) {
