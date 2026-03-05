@@ -40,3 +40,8 @@ export type FooterProps = {
 export type PostCardProps = {
   post: RentalPostPreview;
 };
+
+export type RedditResponse = {
+  status: (code: number) => RedditResponse;
+  json: (body: unknown) => void;
+};
