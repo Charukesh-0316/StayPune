@@ -25,11 +25,8 @@ type RedditListingResponse = {
 };
 
 const redditSourceUrls = [
-  "https://api.reddit.com/r/PuneClassifieds/new?limit=20&raw_json=1",
-  "https://www.reddit.com/r/PuneClassifieds/new.json?limit=20&raw_json=1",
-  "https://www.reddit.com/r/PuneClassifieds/new/.json?limit=20&raw_json=1",
-  "https://old.reddit.com/r/PuneClassifieds/new.json?limit=20&raw_json=1",
-] as const;
+  "https://www.reddit.com/r/PuneClassifieds/new.json?limit=20",
+];
 
 const rentalIncludeKeywords = [
   "rent",
