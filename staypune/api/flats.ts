@@ -131,10 +131,10 @@ async function fetchListingWithFallback() {
     try {
       const response = await fetch(url, {
         headers: {
-          // Reddit is stricter with generic or missing user-agent values.
-          "user-agent": "StayPuneFeed/1.0 (+https://stay-pune.vercel.app)",
-          accept: "application/json",
-          "accept-language": "en-US,en;q=0.8",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+          Accept: "application/json",
+          "Accept-Language": "en-US,en;q=0.9",
+          Referer: "https://www.reddit.com/",
         },
       });
 
