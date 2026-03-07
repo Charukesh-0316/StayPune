@@ -25,7 +25,7 @@ type RedditListingResponse = {
 };
 
 const redditSourceUrls = [
-  "https://www.reddit.com/r/PuneClassifieds/new.json?limit=20",
+  "https://www.reddit.com/r/PuneClassifieds/new.rss?limit=20",
 ];
 
 const rentalIncludeKeywords = [
