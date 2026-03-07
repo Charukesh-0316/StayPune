@@ -27,6 +27,8 @@ type RedditListingResponse = {
 const redditSourceUrls = [
   "https://api.reddit.com/r/PuneClassifieds/new?limit=20&raw_json=1",
   "https://www.reddit.com/r/PuneClassifieds/new.json?limit=20&raw_json=1",
+  "https://www.reddit.com/r/PuneClassifieds/new/.json?limit=20&raw_json=1",
+  "https://old.reddit.com/r/PuneClassifieds/new.json?limit=20&raw_json=1",
 ] as const;
 
 const rentalIncludeKeywords = [
@@ -123,39 +125,47 @@ function mapRentalPostPreviews(listing: RedditListingResponse) {
 }
 
 async function fetchListingWithFallback() {
-  let lastStatus = 500;
+  const upstreamStatuses: number[] = [];
 
   for (const url of redditSourceUrls) {
-    const response = await fetch(url, {
-      headers: {
-        "user-agent": "Mozilla/5.0 (compatible; StayPuneFeed/1.0; +https://stay-pune.vercel.app)",
-        accept: "application/json",
-      },
-    });
+    try {
+      const response = await fetch(url, {
+        headers: {
+          // Reddit is stricter with generic or missing user-agent values.
+          "user-agent": "StayPuneFeed/1.0 (+https://stay-pune.vercel.app)",
+          accept: "application/json",
+          "accept-language": "en-US,en;q=0.8",
+        },
+      });
 
-    if (response.ok) {
-      const listing = (await response.json()) as RedditListingResponse;
-      return {
-        listing,
-        status: response.status,
-      };
+      if (response.ok) {
+        const listing = (await response.json()) as RedditListingResponse;
+        return {
+          listing,
+          upstreamStatuses,
+        };
+      }
+
+      upstreamStatuses.push(response.status);
+    } catch {
+      // Keep trying the next source URL.
+      upstreamStatuses.push(0);
     }
-
-    lastStatus = response.status;
   }
 
   return {
     listing: null,
-    status: lastStatus,
+    upstreamStatuses,
   };
 }
 
 export default async function handler(_req: unknown, res: ApiResponse) {
   try {
-    const { listing, status } = await fetchListingWithFallback();
+    const { listing, upstreamStatuses } = await fetchListingWithFallback();
     if (!listing) {
-      res.status(status).json({
+      res.status(502).json({
         error: "Failed to fetch flats from Reddit",
+        upstreamStatuses,
       });
       return;
     }
