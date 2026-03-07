@@ -24,9 +24,7 @@ type RedditListingResponse = {
   };
 };
 
-const redditSourceUrls = [
-  "https://www.reddit.com/r/PuneClassifieds/new.rss?limit=20",
-];
+const redditSourceUrl = "https://www.reddit.com/r/PuneClassifieds.json";
 
 const rentalIncludeKeywords = [
   "rent",
@@ -121,48 +119,49 @@ function mapRentalPostPreviews(listing: RedditListingResponse) {
     }));
 }
 
-async function fetchListingWithFallback() {
-  const upstreamStatuses: number[] = [];
+type ListingFetchResult = {
+  listing: RedditListingResponse | null;
+  responseStatus: number | null;
+};
 
-  for (const url of redditSourceUrls) {
-    try {
-      const response = await fetch(url, {
-        headers: {
-          "User-Agent": "staypune:v1.0.0 (by /u/ThatFail4354)",
-          Accept: "application/json",
-          "Accept-Language": "en-US,en;q=0.9",
-          Referer: "https://www.reddit.com/",
-        },
-      });
+async function fetchListingWithFallback(): Promise<ListingFetchResult> {
+  try {
+    const response = await fetch(redditSourceUrl, {
+      headers: {
+        "User-Agent": "staypune:v1.0.0 (by /u/ThatFail4354)",
+        Accept: "application/json",
+        "Accept-Language": "en-US,en;q=0.9",
+        Referer: "https://www.reddit.com/",
+      },
+    });
 
-      if (response.ok) {
-        const listing = (await response.json()) as RedditListingResponse;
-        return {
-          listing,
-          upstreamStatuses,
-        };
-      }
-
-      upstreamStatuses.push(response.status);
-    } catch {
-      // Keep trying the next source URL.
-      upstreamStatuses.push(0);
+    if (!response.ok) {
+      return {
+        listing: null,
+        responseStatus: response.status,
+      };
     }
-  }
 
-  return {
-    listing: null,
-    upstreamStatuses,
-  };
+    const listing = (await response.json()) as RedditListingResponse;
+    return {
+      listing,
+      responseStatus: response.status,
+    };
+  } catch {
+    return {
+      listing: null,
+      responseStatus: null,
+    };
+  }
 }
 
 export default async function handler(_req: unknown, res: ApiResponse) {
   try {
-    const { listing, upstreamStatuses } = await fetchListingWithFallback();
+    const { listing, responseStatus } = await fetchListingWithFallback();
     if (!listing) {
       res.status(502).json({
         error: "Failed to fetch flats from Reddit",
-        upstreamStatuses,
+        responseStatus,
       });
       return;
     }
